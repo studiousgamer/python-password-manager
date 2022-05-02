@@ -92,7 +92,20 @@ class App:
 		self.root.resizable(False, False)
 		self.root.configure(background='#f0f0f0')
 
-		tk.Button()
+		tk.Label(self.root, text="PyPassword Manager", font=("Helvetica", 25), bg='#f0f0f0', justify=tk.CENTER).place(x=0, y=40, width=400, height=50)
+
+		tk.Button(self.root, text="Add", command=self.add).place(x=30, y=110, width=100, height=25)
+		tk.Button(self.root, text="Retrieve", command=self.retrieve).place(x=150, y=110, width=100, height=25)
+		tk.Button(self.root, text="Generate", command=self.generate).place(x=270, y=110, width=100, height=25)
+	
+	def add(self):
+		pass
+
+	def retrieve(self):
+		pass
+
+	def generate(self):
+		pass
 
 
 if __name__ == "__main__":
