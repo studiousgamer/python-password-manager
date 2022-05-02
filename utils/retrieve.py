@@ -14,8 +14,7 @@ from rich.table import Table
 def computeMasterKey(mp,ds):
 	password = mp.encode()
 	salt = ds.encode()
-	key = PBKDF2(password, salt, 32, count=1000000, hmac_hash_module=SHA512)
-	return key
+	return PBKDF2(password, salt, 32, count=1000000, hmac_hash_module=SHA512)
 
 def retrieveEntries(mp, ds, search, decryptPassword = False):
 	db = dbconfig()
@@ -53,7 +52,7 @@ def retrieveEntries(mp, ds, search, decryptPassword = False):
 		console.print(table)
 		return 
 
-	if decryptPassword and len(results)==1:
+	if len(results) == 1:
 		# Compute master key
 		mk = computeMasterKey(mp,ds)
 

@@ -44,16 +44,16 @@ def inputAndValidateMasterPassword():
 
 def main():
 	if args.option in ["add","a"]:
-		if args.name == None or args.url == None or args.login == None:
-			if args.name == None:
+		if args.name is None or args.url is None or args.login is None:
+			if args.name is None:
 				printc("[red][!][/red] Site Name (-s) required ")
-			if args.url == None:
+			if args.url is None:
 				printc("[red][!][/red] Site URL (-u) required ")
-			if args.login == None:
+			if args.login is None:
 				printc("[red][!][/red] Site Login (-l) required ")
 			return
 
-		if args.email == None:
+		if args.email is None:
 			args.email = ""
 
 		res = inputAndValidateMasterPassword()
@@ -83,7 +83,7 @@ def main():
 
 
 	if args.option in ["generate","g"]:
-		if args.length == None:
+		if args.length is None:
 			printc("[red][+][/red] Specify length of the password to generate (--length)")
 			return
 		password = utils.generate.generatePassword(args.length)

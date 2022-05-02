@@ -13,8 +13,7 @@ from rich.console import Console
 def computeMasterKey(mp,ds):
 	password = mp.encode()
 	salt = ds.encode()
-	key = PBKDF2(password, salt, 32, count=1000000, hmac_hash_module=SHA512)
-	return key
+	return PBKDF2(password, salt, 32, count=1000000, hmac_hash_module=SHA512)
 
 
 def checkEntry(sitename, siteurl, email, username):
