@@ -6,6 +6,7 @@ from Crypto.Protocol.KDF import PBKDF2
 from Crypto.Hash import SHA512
 from Crypto.Random import get_random_bytes
 import base64
+from tkinter import messagebox
 
 from rich import print as printc
 from rich.console import Console
@@ -33,24 +34,18 @@ def retrieveEntries(mp, ds, search, decryptPassword = False):
 	results = cursor.fetchall()
 
 	if len(results) == 0:
-		printc("[yellow][-][/yellow] No results for the search")
-		return
+		return ["success", "No entries found"]
 
 	if (decryptPassword and len(results)>1) or (not decryptPassword):
 		if decryptPassword:
-			printc("[yellow][-][/yellow] More than one result found for the search, therefore not extracting the password. Be more specific.")
-		table = Table(title="Results")
-		table.add_column("Site Name")
-		table.add_column("URL",)
-		table.add_column("Email")
-		table.add_column("Username")
-		table.add_column("Password")
+			messagebox.showinfo("Warning", "More than one result found for the search, therefore not extracting the password. Be more specific.")
+		
+		data = []
 
 		for i in results:
-			table.add_row(i[0], i[1], i[2], i[3], "{hidden}")
-		console = Console()
-		console.print(table)
-		return 
+			data.append([i[0], i[1], i[2], i[3]])
+			
+		return ["success", data]
 
 	if len(results) == 1:
 		# Compute master key
@@ -59,7 +54,7 @@ def retrieveEntries(mp, ds, search, decryptPassword = False):
 		# decrypt password
 		decrypted = utils.aesutil.decrypt(key=mk,source=results[0][4],keyType="bytes")
 
-		printc("[green][+][/green] Password copied to clipboard")
 		pyperclip.copy(decrypted.decode())
-
+		return ["success", "Password copied to clipboard"]
+		
 	db.close()

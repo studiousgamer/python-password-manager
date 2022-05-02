@@ -4,7 +4,7 @@ import hashlib
 import pyperclip
 from dotenv import load_dotenv
 import tkinter as tk
-from tkinter import simpledialog, messagebox
+from tkinter import simpledialog, messagebox, ttk
 
 import utils.add
 import utils.retrieve
@@ -12,69 +12,6 @@ import utils.generate
 from utils.dbconfig import dbconfig
 
 load_dotenv()
-
-# parser = argparse.ArgumentParser(description='Description')
-
-# parser.add_argument('option', help='(a)dd / (e)xtract / (g)enerate')
-# parser.add_argument("-s", "--name", help="Site name")
-# parser.add_argument("-u", "--url", help="Site URL")
-# parser.add_argument("-e", "--email", help="Email")
-# parser.add_argument("-l", "--login", help="Username")
-# parser.add_argument("--length", help="Length of the password to generate",type=int)
-# parser.add_argument("-c", "--copy", action='store_true', help='Copy password to clipboard')
-
-# args = parser.parse_args()
-
-# def inputAndValidateMasterPassword():
-# 	mp = getpass("MASTER PASSWORD: ")
-# 	hashed_mp = hashlib.sha256(mp.encode()).hexdigest()
-
-# 	db = dbconfig()
-# 	cursor = db.cursor()
-# 	query = "SELECT * FROM pm.secrets"
-# 	cursor.execute(query)
-# 	result = cursor.fetchall()[0]
-# 	if hashed_mp != result[0]:
-# 		printc("[red][!] WRONG! [/red]")
-# 		return None
-
-# 	return [mp,result[1]]
-
-
-# def main():
-# 	if args.option in ["add","a"]:
-# 		if args.name is None or args.url is None or args.login is None:
-# 			if args.name is None:
-# 				printc("[red][!][/red] Site Name (-s) required ")
-# 			if args.url is None:
-# 				printc("[red][!][/red] Site URL (-u) required ")
-# 			if args.login is None:
-# 				printc("[red][!][/red] Site Login (-l) required ")
-# 			return
-
-# 		if args.email is None:
-# 			args.email = ""
-
-# 		res = inputAndValidateMasterPassword()
-# 		if res is not None:
-# 			utils.add.addEntry(res[0],res[1],args.name,args.url,args.email,args.login)
-
-
-# 	if args.option in ["extract","e"]:
-# 		res = inputAndValidateMasterPassword()
-
-# 		search = {}
-# 		if args.name is not None:
-# 			search["sitename"] = args.name
-# 		if args.url is not None:
-# 			search["siteurl"] = args.url
-# 		if args.email is not None:
-# 			search["email"] = args.email
-# 		if args.login is not None:
-# 			search["username"] = args.login
-
-# 		if res is not None:
-# 			utils.retrieve.retrieveEntries(res[0],res[1],search,decryptPassword = args.copy)
 
 
 # 	if args.option in ["generate","g"]:
@@ -164,14 +101,32 @@ class Popup:
 				if username not in ["", None]:
 					search["username"] = username
 
-
-				print(search)
-
 				result = utils.retrieve.retrieveEntries(result[0], result[1], search, decryptPassword=True)
-				if result:
-					messagebox.showinfo("Success", "Password extracted successfully")
+				if type(result[1]) is list:
+					passDisplay = tk.Toplevel(self.root)
+					passDisplay.wm_title("Password")
+					passDisplay.geometry("470x200")
+					tk.Label(passDisplay, text="Retrieved Passwords", justify=tk.CENTER, font=(
+						"Helvetica", 20)).place(x=0, y=15, width=470, height=30)
+					treeview = ttk.Treeview(passDisplay)
+					treeview.place(x=10, y=50, width=450, height=140)
+					treeview["columns"] = ("sitename", "siteurl", "email", "username")
+
+					treeview.heading("#0", text="ID")
+					treeview.column("#0", width=50)
+					treeview.heading("sitename", text="Site Name")
+					treeview.column("sitename", width=100)
+					treeview.heading("siteurl", text="Site URL")
+					treeview.column("siteurl", width=100)
+					treeview.heading("email", text="Email")
+					treeview.column("email", width=100)
+					treeview.heading("username", text="Username")
+					treeview.column("username", width=100)
+
+					for index, entry in enumerate(result[1]):
+						treeview.insert("", index, text=str(index), values=(entry[0], entry[1], entry[2], entry[3]))
 				else:
-					messagebox.showerror("Error", "Error extracting password")
+					messagebox.showinfo(result[0], result[1])
 
 
 class App:
