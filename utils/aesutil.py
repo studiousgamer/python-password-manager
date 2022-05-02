@@ -19,7 +19,7 @@ def encrypt(key, source, encode=True, keyType = 'hex'):
 
 	source = source.encode()
 	if keyType == "hex":
-		 # Convert key (in hex representation) to bytes 
+		# Convert key (in hex representation) to bytes 
 		key = bytes(bytearray.fromhex(key))
 	# else:
 	# 	# use SHA-256 over our key to get a proper-sized AES key. Outputs in bytes 

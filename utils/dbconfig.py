@@ -1,14 +1,16 @@
 import mysql.connector
 from rich import print as printc
 from rich.console import Console
+import os
+
 console = Console()
   
 def dbconfig():
   try:
     db = mysql.connector.connect(
       host ="localhost",
-      user ="pm",
-      passwd ="password"
+      user ="root",
+      passwd = os.environ.get("passwd"),
     )
     # printc("[green][+][/green] Connected to db")
   except Exception as e:

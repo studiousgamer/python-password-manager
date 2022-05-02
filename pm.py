@@ -1,95 +1,102 @@
 #!/usr/bin/env python
 
-import argparse
-from getpass import getpass
 import hashlib
 import pyperclip
-
-from rich import print as printc
+from dotenv import load_dotenv
+import tkinter as tk
 
 import utils.add
 import utils.retrieve
 import utils.generate
 from utils.dbconfig import dbconfig
 
-parser = argparse.ArgumentParser(description='Description')
+load_dotenv()
 
-parser.add_argument('option', help='(a)dd / (e)xtract / (g)enerate')
-parser.add_argument("-s", "--name", help="Site name")
-parser.add_argument("-u", "--url", help="Site URL")
-parser.add_argument("-e", "--email", help="Email")
-parser.add_argument("-l", "--login", help="Username")
-parser.add_argument("--length", help="Length of the password to generate",type=int)
-parser.add_argument("-c", "--copy", action='store_true', help='Copy password to clipboard')
+# parser = argparse.ArgumentParser(description='Description')
 
+# parser.add_argument('option', help='(a)dd / (e)xtract / (g)enerate')
+# parser.add_argument("-s", "--name", help="Site name")
+# parser.add_argument("-u", "--url", help="Site URL")
+# parser.add_argument("-e", "--email", help="Email")
+# parser.add_argument("-l", "--login", help="Username")
+# parser.add_argument("--length", help="Length of the password to generate",type=int)
+# parser.add_argument("-c", "--copy", action='store_true', help='Copy password to clipboard')
 
-args = parser.parse_args()
+# args = parser.parse_args()
 
+# def inputAndValidateMasterPassword():
+# 	mp = getpass("MASTER PASSWORD: ")
+# 	hashed_mp = hashlib.sha256(mp.encode()).hexdigest()
 
-def inputAndValidateMasterPassword():
-	mp = getpass("MASTER PASSWORD: ")
-	hashed_mp = hashlib.sha256(mp.encode()).hexdigest()
+# 	db = dbconfig()
+# 	cursor = db.cursor()
+# 	query = "SELECT * FROM pm.secrets"
+# 	cursor.execute(query)
+# 	result = cursor.fetchall()[0]
+# 	if hashed_mp != result[0]:
+# 		printc("[red][!] WRONG! [/red]")
+# 		return None
 
-	db = dbconfig()
-	cursor = db.cursor()
-	query = "SELECT * FROM pm.secrets"
-	cursor.execute(query)
-	result = cursor.fetchall()[0]
-	if hashed_mp != result[0]:
-		printc("[red][!] WRONG! [/red]")
-		return None
-
-	return [mp,result[1]]
-
-
-def main():
-	if args.option in ["add","a"]:
-		if args.name is None or args.url is None or args.login is None:
-			if args.name is None:
-				printc("[red][!][/red] Site Name (-s) required ")
-			if args.url is None:
-				printc("[red][!][/red] Site URL (-u) required ")
-			if args.login is None:
-				printc("[red][!][/red] Site Login (-l) required ")
-			return
-
-		if args.email is None:
-			args.email = ""
-
-		res = inputAndValidateMasterPassword()
-		if res is not None:
-			utils.add.addEntry(res[0],res[1],args.name,args.url,args.email,args.login)
+# 	return [mp,result[1]]
 
 
-	if args.option in ["extract","e"]:
-		# if args.name == None and args.url == None and args.email == None and args.login == None:
-		# 	# retrieve all
-		# 	printc("[red][!][/red] Please enter at least one search field (sitename/url/email/username)")
-		# 	return
-		res = inputAndValidateMasterPassword()
+# def main():
+# 	if args.option in ["add","a"]:
+# 		if args.name is None or args.url is None or args.login is None:
+# 			if args.name is None:
+# 				printc("[red][!][/red] Site Name (-s) required ")
+# 			if args.url is None:
+# 				printc("[red][!][/red] Site URL (-u) required ")
+# 			if args.login is None:
+# 				printc("[red][!][/red] Site Login (-l) required ")
+# 			return
 
-		search = {}
-		if args.name is not None:
-			search["sitename"] = args.name
-		if args.url is not None:
-			search["siteurl"] = args.url
-		if args.email is not None:
-			search["email"] = args.email
-		if args.login is not None:
-			search["username"] = args.login
+# 		if args.email is None:
+# 			args.email = ""
 
-		if res is not None:
-			utils.retrieve.retrieveEntries(res[0],res[1],search,decryptPassword = args.copy)
+# 		res = inputAndValidateMasterPassword()
+# 		if res is not None:
+# 			utils.add.addEntry(res[0],res[1],args.name,args.url,args.email,args.login)
 
 
-	if args.option in ["generate","g"]:
-		if args.length is None:
-			printc("[red][+][/red] Specify length of the password to generate (--length)")
-			return
-		password = utils.generate.generatePassword(args.length)
-		pyperclip.copy(password)
-		printc("[green][+][/green] Password generated and copied to clipboard")
+# 	if args.option in ["extract","e"]:
+# 		res = inputAndValidateMasterPassword()
+
+# 		search = {}
+# 		if args.name is not None:
+# 			search["sitename"] = args.name
+# 		if args.url is not None:
+# 			search["siteurl"] = args.url
+# 		if args.email is not None:
+# 			search["email"] = args.email
+# 		if args.login is not None:
+# 			search["username"] = args.login
+
+# 		if res is not None:
+# 			utils.retrieve.retrieveEntries(res[0],res[1],search,decryptPassword = args.copy)
 
 
+# 	if args.option in ["generate","g"]:
+# 		if args.length is None:
+# 			printc("[red][+][/red] Specify length of the password to generate (--length)")
+# 			return
+# 		password = utils.generate.generatePassword(args.length)
+# 		pyperclip.copy(password)
+# 		printc("[green][+][/green] Password generated and copied to clipboard")
 
-main()
+class App:
+	def __init__(self, root):
+		self.root = root
+		self.root.title("PyPassword Manager")
+		self.root.geometry("400x200")
+		self.root.resizable(False, False)
+		self.root.configure(background='#f0f0f0')
+
+		tk.Button()
+
+
+if __name__ == "__main__":
+	root = tk.Tk()
+	app = App(root)
+	root.mainloop()
+# main()
