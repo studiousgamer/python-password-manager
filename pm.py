@@ -133,13 +133,13 @@ class Popup:
 			if hashed_mp != result[0]:
 				messagebox.showerror("Error", "Wrong master password")
 				return
-			for input_ in self.inputs.values():
-				content = input_.get()
-				if content.replace(" ", "") == "":
-					messagebox.showerror("Error", "Empty fields")
-					return
 
 			if self.name == "Add Password":
+				for input_ in self.inputs.values():
+					content = input_.get()
+					if content.replace(" ", "") == "":
+						messagebox.showerror("Error", "Empty fields")
+						return
 				result = utils.add.addEntry(result[0], result[1], self.inputs["Site_Name"].get(), 
 						self.inputs["Site_URL"].get(), self.inputs["Email"].get(), self.inputs["Username"].get(), 
 						self.inputs["Password"].get())
@@ -147,6 +147,31 @@ class Popup:
 					messagebox.showinfo("Success", "Password added successfully")
 				else:
 					messagebox.showerror("Error", "Error adding password")
+
+			if self.name == "Retrieve Password":
+				search = {}
+				site_name = self.inputs["Site_Name"].get()
+				url = self.inputs["Site_URL"].get()
+				email = self.inputs["Email"].get()
+				username = self.inputs["Username"].get()
+				
+				if site_name not in ["", None]:
+					search["sitename"] = site_name
+				if url not in ["", None]:
+					search["siteurl"] = url
+				if email not in ["", None]:
+					search["email"] = email
+				if username not in ["", None]:
+					search["username"] = username
+
+
+				print(search)
+
+				result = utils.retrieve.retrieveEntries(result[0], result[1], search, decryptPassword=True)
+				if result:
+					messagebox.showinfo("Success", "Password extracted successfully")
+				else:
+					messagebox.showerror("Error", "Error extracting password")
 
 
 class App:
@@ -172,7 +197,8 @@ class App:
 			  "Site_Name", "Site_URL", "Email", "Username (*)", "Password (*)"], askMastePass=True)
 
 	def retrieve(self):
-		pass
+		Popup(self.root, "Retrieve Password", [
+			  "Site_Name", "Site_URL", "Email", "Username"], askMastePass=True)
 
 	def generate(self):
 		pass
