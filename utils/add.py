@@ -48,4 +48,4 @@ def addEntry(mp, ds, sitename, siteurl, email, username, password):
 	cursor.execute(query, val)
 	db.commit()
 
-	printc("[green][+][/green] Added entry ")
+	return True
