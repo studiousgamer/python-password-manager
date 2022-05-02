@@ -1,7 +1,4 @@
-#!/usr/bin/env python
-
 import hashlib
-import pyperclip
 from dotenv import load_dotenv
 import tkinter as tk
 from tkinter import simpledialog, messagebox, ttk
@@ -12,15 +9,6 @@ import utils.generate
 from utils.dbconfig import dbconfig
 
 load_dotenv()
-
-
-# 	if args.option in ["generate","g"]:
-# 		if args.length is None:
-# 			printc("[red][+][/red] Specify length of the password to generate (--length)")
-# 			return
-# 		password = utils.generate.generatePassword(args.length)
-# 		pyperclip.copy(password)
-# 		printc("[green][+][/green] Password generated and copied to clipboard")
 
 class Popup:
 	def __init__(self, root, name, options: list, askMastePass=False):
@@ -156,7 +144,7 @@ class App:
 			  "Site_Name", "Site_URL", "Email", "Username"], askMastePass=True)
 
 	def generate(self):
-		pass
+		utils.generate.Generator(self.root)
 
 
 if __name__ == "__main__":
