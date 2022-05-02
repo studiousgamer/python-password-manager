@@ -4,6 +4,7 @@ import hashlib
 import pyperclip
 from dotenv import load_dotenv
 import tkinter as tk
+from tkinter import simpledialog, messagebox
 
 import utils.add
 import utils.retrieve
@@ -84,32 +85,92 @@ load_dotenv()
 # 		pyperclip.copy(password)
 # 		printc("[green][+][/green] Password generated and copied to clipboard")
 
+class Popup:
+    def __init__(self, root, name, options: list, askMastePass=False):
+        self.root = root
+        self.name = name
+        self.options = options
+        self.askMastePass = askMastePass
+
+        self.window = tk.Toplevel(root)
+        self.window.wm_title(self.name)
+
+        height = 95
+        for option in self.options:
+            height += 30
+
+        self.window.geometry(f"400x{height}")
+        self.inputs = {}
+
+        tk.Label(self.window, text=self.name, justify=tk.CENTER, font=(
+            "Helvetica", 20)).place(x=0, y=15, width=400, height=30)
+
+        for index, name in enumerate(self.options):
+            tk.Label(self.window, text=name).place(
+                x=10, y=55 + (index * 30), width=100, height=25)
+            self.inputs[name.split(" ")[0]] = tk.Entry(self.window)
+            self.inputs[name.split(" ")[0]].place(
+                x=120, y=55 + (index * 30), width=200, height=25)
+
+        # ok and cancel buttons
+        tk.Button(self.window, text="OK", command=self.ok).place(
+            x=200, y=height - 50, width=100, height=25)
+        tk.Button(self.window, text="Cancel", command=self.window.destroy).place(
+            x=300, y=height - 50, width=100, height=25)
+
+    def ok(self):
+        if self.askMastePass:
+            password = simpledialog.askstring(
+                "MASTER PASSWORD", "Enter master password:")
+            if password is None:
+                return
+            hashed_mp = hashlib.sha256(password.encode()).hexdigest()
+            db = dbconfig()
+            cursor = db.cursor()
+            query = "SELECT * FROM pm.secrets"
+            cursor.execute(query)
+            result = cursor.fetchall()[0]
+            if hashed_mp != result[0]:
+                messagebox.showerror("Error", "Wrong master password")
+                return
+            for input_ in self.inputs.values():
+                content = input_.get()
+                if content.replace(" ", "") == "":
+                    messagebox.showerror("Error", "Empty fields")
+                    return
+
+
+
 class App:
-	def __init__(self, root):
-		self.root = root
-		self.root.title("PyPassword Manager")
-		self.root.geometry("400x200")
-		self.root.resizable(False, False)
-		self.root.configure(background='#f0f0f0')
+    def __init__(self, root):
+        self.root = root
+        self.root.title("PyPassword Manager")
+        self.root.geometry("400x200")
+        self.root.resizable(False, False)
+        self.root.configure(background='#f0f0f0')
 
-		tk.Label(self.root, text="PyPassword Manager", font=("Helvetica", 25), bg='#f0f0f0', justify=tk.CENTER).place(x=0, y=40, width=400, height=50)
+        tk.Label(self.root, text="PyPassword Manager", font=("Helvetica", 25),
+                 bg='#f0f0f0', justify=tk.CENTER).place(x=0, y=40, width=400, height=50)
 
-		tk.Button(self.root, text="Add", command=self.add).place(x=30, y=110, width=100, height=25)
-		tk.Button(self.root, text="Retrieve", command=self.retrieve).place(x=150, y=110, width=100, height=25)
-		tk.Button(self.root, text="Generate", command=self.generate).place(x=270, y=110, width=100, height=25)
-	
-	def add(self):
+        tk.Button(self.root, text="Add", command=self.add).place(
+            x=30, y=110, width=100, height=25)
+        tk.Button(self.root, text="Retrieve", command=self.retrieve).place(
+            x=150, y=110, width=100, height=25)
+        tk.Button(self.root, text="Generate", command=self.generate).place(
+            x=270, y=110, width=100, height=25)
+
+    def add(self):
 		pass
 
-	def retrieve(self):
-		pass
+    def retrieve(self):
+        pass
 
-	def generate(self):
-		pass
+    def generate(self):
+        pass
 
 
 if __name__ == "__main__":
-	root = tk.Tk()
-	app = App(root)
-	root.mainloop()
+    root = tk.Tk()
+    app = App(root)
+    root.mainloop()
 # main()

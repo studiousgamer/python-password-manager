@@ -28,14 +28,11 @@ def checkEntry(sitename, siteurl, email, username):
 	return False
 
 
-def addEntry(mp, ds, sitename, siteurl, email, username):
+def addEntry(mp, ds, sitename, siteurl, email, username, password):
 	# Check if the entry already exists
 	if checkEntry(sitename, siteurl, email, username):
 		printc("[yellow][-][/yellow] Entry with these details already exists")
 		return
-
-	# Input Password
-	password = getpass("Password: ")
 
 	# compute master key
 	mk = computeMasterKey(mp,ds)
